@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Will you go out with me?</title>
+    <style>
+        :root {
+            --accent: #ff6480;
+            --muted: rgba(255, 255, 255, 0.95);
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: system-ui, Segoe UI, Roboto, Arial;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+            color: var(--muted);
+            position: relative;
+            transition: background-image .25s ease;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.6));
+            pointer-events: none;
+        }
+
+        .wrap {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 2rem;
+            width: 100%;
+            max-width: 980px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin: 0 0 .4rem;
+            text-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        p.lead {
+            margin: 0 0 1rem;
+            opacity: 0.95;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.25rem;
+            position: relative;
+            height: 140px;
+        }
+
+        .cta {
+            padding: 1rem 1.8rem;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            border: 0;
+            cursor: pointer;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+        }
+
+        .cta.yes {
+            background: linear-gradient(90deg, #ff9bb3, #ff6480);
+            color: white;
+        }
+
+        .cta.no {
+            background: linear-gradient(90deg, #fff, #fafafa);
+            color: #333;
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 0);
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.55);
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            background: white;
+            color: #111;
+            padding: 1.25rem;
+            border-radius: 10px;
+            width: 92%;
+            max-width: 420px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+        }
+
+        label {
+            display: block;
+            font-size: .9rem;
+            margin-top: .6rem;
+        }
+
+        input[type="datetime-local"],
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: .6rem;
+            margin-top: .25rem;
+            box-sizing: border-box;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        #bgUpload {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            z-index: 6;
+            background: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+        }
+
+        .controls {
+            display: flex;
+            gap: .5rem;
+            justify-content: flex-end;
+            margin-top: .8rem;
+        }
+
+        .infoBox {
+            margin-top: 1rem;
+            padding: .8rem;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+        }
+
+        button.linkish {
+            background: none;
+            border: none;
+            color: var(--accent);
+            cursor: pointer;
+            padding: 0;
+        }
+
+        @media (max-width:520px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .cta {
+                padding: .85rem 1.1rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <input id="bgUpload" type="file" accept="image/*" title="Upload background (used only locally)" />
+    <div class="overlay" aria-hidden="true"></div>
+
+    <div class="wrap" role="main">
+        <h1>Will you go out with me?</h1>
+        <p class="lead">(Choose — but the "No" might be tricky 😅)</p>
+
+        <div class="buttons" id="buttons">
+            <button id="yesBtn" class="cta yes" aria-label="Yes">Yes 💖</button>
+            <button id="noBtn" class="cta no" aria-label="No">No 😅</button>
+        </div>
+
+        <div id="after" class="infoBox" aria-live="polite" style="display:none;"></div>
+    </div>
+
+    <!-- The original in-page Yes modal is kept hidden (not used when popup flow active) -->
+    <div id="yesModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="yesTitle">
+        <div class="modal-content">
+            <h2 id="yesTitle">Yay! Pick a date & time</h2>
+            <form id="dateForm">
+                <label for="datetime">Date & time</label>
+                <input id="datetime" name="datetime" type="datetime-local" />
+                <label for="note">Short note (optional)</label>
+                <textarea id="note" rows="3" placeholder="e.g., Dinner at The Olive - 7pm"></textarea>
+                <div class="controls">
+                    <button type="button" id="cancelYes">Cancel</button>
+                    <button type="submit" class="cta yes">Confirm</button>
+                </div>
+                <div id="yesFeedback" style="margin-top:.6rem"></div>
+            </form>
+            <div style="margin-top:.6rem;font-size:.85rem;color:#666">
+                Confirmation is stored on this device only. No data is sent anywhere.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ----------------- Utilities ----------------- */
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+        }
+        function readableLocalDatetime(dtStr) {
+            try { return new Date(dtStr).toLocaleString(); } catch { return dtStr; }
+        }
+        function saveConfirmation(obj) {
+            const key = 'proposal_confirmations';
+            const arr = JSON.parse(localStorage.getItem(key) || '[]');
+            arr.push(obj);
+            localStorage.setItem(key, JSON.stringify(arr));
+            return arr;
+        }
+        function createICS({ title = 'Date', startISO, durationMinutes = 90, description = '' }) {
+            // Minimal ICS generator (UTC-lacking TZ rules). Good enough for quick import.
+            const dtStart = startISO.replace(/[-:]/g, '').split('.')[0];
+            const start = new Date(startISO);
+            const end = new Date(start.getTime() + durationMinutes * 60000);
+            const dtEnd = end.toISOString().replace(/[-:]/g, '').split('.')[0];
+            const uid = 'proposal-' + Math.random().toString(36).slice(2) + '@local';
+            const ics = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//ProposalApp//EN',
+                'BEGIN:VEVENT',
+                `UID:${uid}`,
+                `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}`,
+                `DTSTART:${dtStart}`,
+                `DTEND:${dtEnd}`,
+                `SUMMARY:${title}`,
+                `DESCRIPTION:${description.replace(/\n/g, '\\n')}`,
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+            return new Blob([ics], { type: 'text/calendar' });
+        }
+
+        /* ----------------- Background uploader (local-only) ----------------- */
+        const bgUpload = document.getElementById('bgUpload');
+        bgUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                document.body.style.backgroundImage = `url(${ev.target.result})`;
+                try { localStorage.setItem('proposal_bg', ev.target.result); } catch (e) { }
+            };
+            reader.readAsDataURL(file);
+        });
+        if (localStorage.getItem('proposal_bg')) {
+            document.body.style.backgroundImage = `url(${localStorage.getItem('proposal_bg')})`;
+        } else {
+            // soft default gradient
+            document.body.style.backgroundImage = 'linear-gradient(120deg,#455a64,#1e88e5)';
+        }
+
+        /* ----------------- Yes button -> open popup flow ----------------- */
+        const yesBtn = document.getElementById('yesBtn');
+        const afterBox = document.getElementById('after');
+
+        function makePopupHtml(appTitle = 'Confirm Date') {
+            // Keep the popup minimal and self-contained. Escape closing script tag.
+            return `
+  <!doctype html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <title>${appTitle}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+      body{font-family:system-ui,Arial;margin:18px;color:#222;}
+      h1{font-size:1.1rem;margin-bottom:.4rem;}
+      label{display:block;margin-top:.6rem;font-size:.95rem;}
+      input,textarea{width:100%;padding:.6rem;margin-top:.25rem;border:1px solid #ddd;border-radius:6px;box-sizing:border-box;}
+      .row{display:flex;gap:.5rem;margin-top:1rem;justify-content:flex-end;}
+      button{padding:.55rem 0.9rem;border-radius:8px;border:0;cursor:pointer;}
+      button.primary{background:#ff6480;color:#fff;}
+      small{display:block;margin-top:.6rem;color:#666;}
+    </style>
+  </head>
+  <body>
+    <h1>Yes — pick a date & time</h1>
+    <form id="frm">
+      <label for="dt">Date & time</label>
+      <input id="dt" name="dt" type="datetime-local" required />
+      <label for="note">Short note (optional)</label>
+      <textarea id="note" rows="3" placeholder="e.g., Dinner at 7pm"></textarea>
+      <div class="row">
+        <button type="button" id="cancel">Cancel</button>
+        <button type="submit" class="primary">Confirm</button>
+      </div>
+      <small>This page returns the selection to the original tab and does not send it anywhere.</small>
+    </form>
+
+    <script>
+      const openerWindow = window.opener;
+      if (!openerWindow) {
+        document.body.innerHTML = '<p>Unable to return the result to the original page. Please close and try again.</p>';
+      }
+
+      document.getElementById('frm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const dt = document.getElementById('dt').value;
+        const note = document.getElementById('note').value || '';
+        if (!dt) { alert('Please select a date & time.'); return; }
+        const payload = {
+          type: 'proposal-confirm',
+          datetimeLocal: dt,
+          datetimeISO: new Date(dt).toISOString(),
+          note: note,
+          savedAt: new Date().toISOString()
+        };
+        try {
+          openerWindow.postMessage(payload, '*');
+        } catch (err) {
+          try { localStorage.setItem('proposal_confirm_temp', JSON.stringify(payload)); } catch(e){}
+        }
+        window.close();
+      });
+
+      document.getElementById('cancel').addEventListener('click', () => {
+        window.close();
+      });
+
+      setTimeout(()=>document.getElementById('dt').focus(), 150);
+    <\/script>
+  </body>
+  </html>
+  `.trim();
+        }
+
+        yesBtn.addEventListener('click', (ev) => {
+            // Open popup synchronously in click handler to avoid blockers
+            const popup = window.open('', '_blank', 'width=420,height=520');
+            if (!popup) {
+                alert('Popup blocked — please allow popups for this site or try opening in a new tab.');
+                return;
+            }
+            const html = makePopupHtml('Pick a date & time');
+            popup.document.open();
+            popup.document.write(html);
+            popup.document.close();
+            popup.focus();
+        });
+
+        /* Receiver for popup result */
+        window.addEventListener('message', (ev) => {
+            try {
+                const msg = ev.data;
+                if (!msg || msg.type !== 'proposal-confirm') return;
+                const iso = msg.datetimeISO;
+                const note = String(msg.note || '').slice(0, 500);
+                const saved = saveConfirmation({
+                    datetimeISO: iso,
+                    datetimeLocal: msg.datetimeLocal,
+                    note,
+                    savedAt: msg.savedAt || new Date().toISOString()
+                });
+
+                // Display confirmation UI
+                afterBox.style.display = 'block';
+                afterBox.innerHTML = `
+      <strong>She said YES! 🎉</strong>
+      <div style="margin-top:.5rem;">
+        <div><strong>Date/time:</strong> ${readableLocalDatetime(iso)}</div>
+        ${note ? `<div><strong>Note:</strong> ${escapeHtml(note)}</div>` : ''}
+        <div style="margin-top:.6rem; display:flex; gap:.5rem; justify-content:flex-end;">
+          <button id="downloadIcs" class="cta yes">Add to calendar (.ics)</button>
+          <button id="copyBtn" class="cta">Copy details</button>
+          <button id="clearBtn" class="linkish">Clear</button>
+        </div>
+        <div id="extraMsg" style="margin-top:.6rem;font-size:.9rem;color:#ddd;"></div>
+        <details style="margin-top:.6rem;color:#eee;">
+          <summary style="cursor:pointer">Saved confirmations (local)</summary>
+          <pre id="savedList" style="white-space:pre-wrap;background:rgba(255,255,255,0.03);padding:.6rem;border-radius:6px;margin-top:.5rem;color:#fff;"></pre>
+        </details>
+      </div>
+    `;
+
+                document.getElementById('downloadIcs').addEventListener('click', () => {
+                    const blob = createICS({
+                        title: 'Date with you 💖',
+                        startISO: iso,
+                        durationMinutes: 90,
+                        description: note || 'A lovely date'
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'date.ics';
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                    document.getElementById('extraMsg').textContent = 'Downloaded — import into your calendar app.';
+                });
+
+                document.getElementById('copyBtn').addEventListener('click', async () => {
+                    const text = `She said YES!\nDate/time: ${readableLocalDatetime(iso)}\n${note ? 'Note: ' + note : ''}`;
+                    try {
+                        await navigator.clipboard.writeText(text);
+                        document.getElementById('extraMsg').textContent = 'Copied to clipboard.';
+                    } catch (err) {
+                        document.getElementById('extraMsg').textContent = 'Unable to copy — select and copy manually:';
+                        const ta = document.createElement('textarea');
+                        ta.value = text;
+                        ta.style.width = '100%'; ta.style.marginTop = '.5rem';
+                        document.getElementById('extraMsg').appendChild(ta);
+                    }
+                });
+
+                document.getElementById('clearBtn').addEventListener('click', () => {
+                    if (confirm('Clear all saved confirmations from this browser?')) {
+                        localStorage.removeItem('proposal_confirmations');
+                        afterBox.style.display = 'none';
+                    }
+                });
+
+                document.getElementById('savedList').textContent = JSON.stringify(saved.map(a => ({
+                    when: a.savedAt,
+                    date: a.datetimeISO,
+                    note: a.note
+                })), null, 2);
+
+            } catch (err) {
+                console.error('message handler error', err);
+            }
+        });
+
+        /* ----------------- No button evasive logic ----------------- */
+        const noBtn = document.getElementById('noBtn');
+        let attempts = 0;
+        function randomPos(el) {
+            const parentRect = el.parentElement.getBoundingClientRect();
+            const maxX = parentRect.width - el.offsetWidth - 20;
+            const maxY = parentRect.height - el.offsetHeight - 20;
+            const x = Math.floor(Math.random() * Math.max(1, maxX));
+            const y = Math.floor(Math.random() * Math.max(1, maxY));
+            el.style.transform = `translate(${x}px, ${y}px)`;
+        }
+        noBtn.addEventListener('mouseenter', () => {
+            attempts++;
+            if (attempts < 3) {
+                randomPos(noBtn);
+            } else if (attempts < 6) {
+                noBtn.style.width = Math.max(60, noBtn.offsetWidth - 6) + 'px';
+                randomPos(noBtn);
+            } else {
+                showNoChallenge();
+            }
+        });
+
+        function showNoChallenge() {
+            if (document.getElementById('noChallenge')) return;
+            const modal = document.createElement('div');
+            modal.id = 'noChallenge';
+            modal.className = 'modal';
+            modal.innerHTML = `
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <h3>Hold on — quick one!</h3>
+      <p>Drag the heart into the box to confirm "No".</p>
+      <div id="dragArea" style="display:flex; gap:1rem; align-items:center; justify-content:center; margin:1rem 0;">
+        <div id="heart" draggable="true" style="font-size:2rem;cursor:grab;">❤️</div>
+        <div id="box" style="width:140px;height:80px;border:2px dashed #999;display:flex;align-items:center;justify-content:center;color:#666;">Drop here</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:.5rem;">
+        <button id="ncCancel">Cancel</button>
+      </div>
+    </div>
+  `;
+            document.body.appendChild(modal);
+            const heart = document.getElementById('heart');
+            const box = document.getElementById('box');
+            box.addEventListener('dragover', e => e.preventDefault());
+            box.addEventListener('drop', () => {
+                alert("Understood. Thank you for being honest. 😊");
+                modal.remove();
+            });
+            document.getElementById('ncCancel').onclick = () => modal.remove();
+        }
+
+        /* ----------------- Fallback: check temp storage if popup wrote to localStorage ----------------- */
+        window.addEventListener('focus', () => {
+            try {
+                const tmp = localStorage.getItem('proposal_confirm_temp');
+                if (tmp) {
+                    const msg = JSON.parse(tmp);
+                    // emulate message reception
+                    window.dispatchEvent(new MessageEvent('message', { data: msg }));
+                    localStorage.removeItem('proposal_confirm_temp');
+                }
+            } catch (e) { }
+        });
+    </script>
+</body>
+
+</html>
