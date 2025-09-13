@@ -1,286 +1,134 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Will you go out with me?</title>
-    <style>
-        :root {
-            --accent: #ff6480;
-            --muted: rgba(255, 255, 255, 0.95);
-        }
-
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            font-family: system-ui, Segoe UI, Roboto, Arial;
-        }
-
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-size: cover;
-            background-position: center;
-            color: var(--muted);
-            position: relative;
-            transition: background-image .25s ease;
-        }
-
-        .overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0.6));
-            pointer-events: none;
-        }
-
-        .wrap {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 2rem;
-            width: 100%;
-            max-width: 980px;
-        }
-
-        h1 {
-            font-size: 2.2rem;
-            margin: 0 0 .4rem;
-            text-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        p.lead {
-            margin: 0 0 1rem;
-            opacity: 0.95;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 1.25rem;
-            position: relative;
-            height: 140px;
-        }
-
-        .cta {
-            padding: 1rem 1.8rem;
-            font-size: 1.1rem;
-            border-radius: 12px;
-            border: 0;
-            cursor: pointer;
-            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
-        }
-
-        .cta.yes {
-            background: linear-gradient(90deg, #ff9bb3, #ff6480);
-            color: white;
-        }
-
-        .cta.no {
-            background: linear-gradient(90deg, #fff, #fafafa);
-            color: #333;
-            position: absolute;
-            left: 50%;
-            transform: translate(-50%, 0);
-            will-change: transform;
-        }
-
-        .modal {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.55);
-        }
-
-        .modal.hidden {
-            display: none;
-        }
-
-        .modal-content {
-            background: white;
-            color: #111;
-            padding: 1.25rem;
-            border-radius: 10px;
-            width: 92%;
-            max-width: 420px;
-            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
-        }
-
-        label {
-            display: block;
-            font-size: .9rem;
-            margin-top: .6rem;
-        }
-
-        input[type="datetime-local"],
-        input[type="text"],
-        textarea {
-            width: 100%;
-            padding: .6rem;
-            margin-top: .25rem;
-            box-sizing: border-box;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-        }
-
-        #bgUpload {
-            position: fixed;
-            top: 12px;
-            right: 12px;
-            z-index: 6;
-            background: #fff;
-            padding: 8px;
-            border-radius: 8px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
-        }
-
-        .controls {
-            display: flex;
-            gap: .5rem;
-            justify-content: flex-end;
-            margin-top: .8rem;
-        }
-
-        .infoBox {
-            margin-top: 1rem;
-            padding: .8rem;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 8px;
-        }
-
-        button.linkish {
-            background: none;
-            border: none;
-            color: var(--accent);
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .decoy {
-            position: absolute;
-            border-radius: 12px;
-            padding: 0.8rem 1.2rem;
-            background: #fff;
-            border: 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-            cursor: pointer;
-            transform-origin: center;
-        }
-
-        @media (max-width:520px) {
-            h1 {
-                font-size: 1.6rem;
-            }
-
-            .cta {
-                padding: .85rem 1.1rem;
-                font-size: 1rem;
-            }
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Will you go out with me?</title>
+<style>
+  :root { --accent: #ff6480; --muted: rgba(255,255,255,0.95); }
+  html,body{height:100%; margin:0; font-family:system-ui,Segoe UI,Roboto,Arial;}
+  body{
+    display:flex; align-items:center; justify-content:center;
+    background-size:cover; background-position:center; color:var(--muted);
+    position:relative; transition: background-image .25s ease;
+  }
+  .overlay{position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,0.22),rgba(0,0,0,0.6)); pointer-events:none;}
+  .wrap{position:relative; z-index:2; text-align:center; padding:2rem; width:100%; max-width:980px;}
+  h1{font-size:2.2rem; margin:0 0 .4rem; text-shadow:0 6px 20px rgba(0,0,0,0.5);}
+  p.lead{margin:0 0 1rem; opacity:0.95;}
+  .buttons{display:flex; gap:1rem; justify-content:center; margin-top:1.25rem; position:relative; height:140px;}
+  .cta{padding:1rem 1.8rem; font-size:1.1rem; border-radius:12px; border:0; cursor:pointer; box-shadow:0 8px 28px rgba(0,0,0,0.35);}
+  .cta.yes{background:linear-gradient(90deg,#ff9bb3,#ff6480); color:white;}
+  .cta.no{background:linear-gradient(90deg,#fff,#fafafa); color:#333; position:absolute; left:50%; transform:translate(-50%,0); will-change:transform;}
+  .modal{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.55);}
+  .modal.hidden{display:none;}
+  .modal-content{background:white;color:#111;padding:1.25rem;border-radius:10px; width:92%; max-width:420px; box-shadow:0 12px 36px rgba(0,0,0,0.35);}
+  label{display:block; font-size:.9rem; margin-top:.6rem;}
+  input[type="datetime-local"], input[type="text"], textarea{width:100%; padding:.6rem; margin-top:.25rem; box-sizing:border-box; border-radius:6px; border:1px solid #ddd;}
+  #bgUpload{position:fixed; top:12px; right:12px; z-index:6; background:#fff;padding:8px;border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,.18);}
+  .controls {display:flex; gap:.5rem; justify-content:flex-end; margin-top:.8rem;}
+  .infoBox{margin-top:1rem; padding:.8rem; background:rgba(255,255,255,0.06); border-radius:8px;}
+  button.linkish{background:none;border:none;color:var(--accent);cursor:pointer;padding:0;}
+  .decoy{position:absolute;border-radius:12px;padding:0.8rem 1.2rem;background:#fff;border:0;box-shadow:0 10px 30px rgba(0,0,0,0.25);cursor:pointer;transform-origin:center;}
+  @media (max-width:520px){ h1{font-size:1.6rem;} .cta{padding:.85rem 1.1rem;font-size:1rem;} }
+</style>
 </head>
-
 <body>
-    <input id="bgUpload" type="file" accept="image/*" title="Upload background (used only locally)" />
-    <div class="overlay" aria-hidden="true"></div>
+  <input id="bgUpload" type="file" accept="image/*" title="Upload background (used only locally)" />
+  <div class="overlay" aria-hidden="true"></div>
 
-    <div class="wrap" role="main">
-        <h1>Will you go out with me?</h1>
-        <p class="lead">(Choose — but the "No" might be tricky 😅)</p>
+  <div class="wrap" role="main">
+    <h1>Will you go out with me?</h1>
+    <p class="lead">(Choose — but the "No" might be tricky 😅)</p>
 
-        <div class="buttons" id="buttons">
-            <button id="yesBtn" class="cta yes" aria-label="Yes">Yes 💖</button>
-            <button id="noBtn" class="cta no" aria-label="No">No 😅</button>
-        </div>
-
-        <div id="after" class="infoBox" aria-live="polite" style="display:none;"></div>
+    <div class="buttons" id="buttons">
+      <button id="yesBtn" class="cta yes" aria-label="Yes">Yes 💖</button>
+      <button id="noBtn" class="cta no" aria-label="No">No 😅</button>
     </div>
 
-    <!-- Hidden in-page modal (not used for popup flow) -->
-    <div id="yesModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="yesTitle">
-        <div class="modal-content">
-            <h2 id="yesTitle">Yay! Pick a date & time</h2>
-            <form id="dateForm">
-                <label for="datetime">Date & time</label>
-                <input id="datetime" name="datetime" type="datetime-local" />
-                <label for="note">Short note (optional)</label>
-                <textarea id="note" rows="3" placeholder="e.g., Dinner at The Olive - 7pm"></textarea>
-                <div class="controls">
-                    <button type="button" id="cancelYes">Cancel</button>
-                    <button type="submit" class="cta yes">Confirm</button>
-                </div>
-                <div id="yesFeedback" style="margin-top:.6rem"></div>
-            </form>
-            <div style="margin-top:.6rem;font-size:.85rem;color:#666">
-                Confirmation is stored on this device only. No data is sent anywhere.
-            </div>
+    <div id="after" class="infoBox" aria-live="polite" style="display:none;"></div>
+  </div>
+
+  <!-- Hidden in-page modal (not used for popup flow) -->
+  <div id="yesModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="yesTitle">
+    <div class="modal-content">
+      <h2 id="yesTitle">Yay! Pick a date & time</h2>
+      <form id="dateForm">
+        <label for="datetime">Date & time</label>
+        <input id="datetime" name="datetime" type="datetime-local" />
+        <label for="note">Short note (optional)</label>
+        <textarea id="note" rows="3" placeholder="e.g., Dinner at The Olive - 7pm"></textarea>
+        <div class="controls">
+          <button type="button" id="cancelYes">Cancel</button>
+          <button type="submit" class="cta yes">Confirm</button>
         </div>
+        <div id="yesFeedback" style="margin-top:.6rem"></div>
+      </form>
+      <div style="margin-top:.6rem;font-size:.85rem;color:#666">
+        Confirmation is stored on this device only. No data is sent anywhere.
+      </div>
     </div>
+  </div>
 
-    <script>
-        /* ----------------- Utilities ----------------- */
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
-        }
-        function readableLocalDatetime(dtStr) {
-            try { return new Date(dtStr).toLocaleString(); } catch { return dtStr; }
-        }
-        function saveConfirmation(obj) {
-            const key = 'proposal_confirmations';
-            const arr = JSON.parse(localStorage.getItem(key) || '[]');
-            arr.push(obj);
-            localStorage.setItem(key, JSON.stringify(arr));
-            return arr;
-        }
-        function createICS({ title = 'Date', startISO, durationMinutes = 90, description = '' }) {
-            const dtStart = startISO.replace(/[-:]/g, '').split('.')[0];
-            const start = new Date(startISO);
-            const end = new Date(start.getTime() + durationMinutes * 60000);
-            const dtEnd = end.toISOString().replace(/[-:]/g, '').split('.')[0];
-            const uid = 'proposal-' + Math.random().toString(36).slice(2) + '@local';
-            const ics = [
-                'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ProposalApp//EN', 'BEGIN:VEVENT',
-                `UID:${uid}`,
-                `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}`,
-                `DTSTART:${dtStart}`,
-                `DTEND:${dtEnd}`,
-                `SUMMARY:${title}`,
-                `DESCRIPTION:${description.replace(/\n/g, '\\n')}`,
-                'END:VEVENT', 'END:VCALENDAR'
-            ].join('\r\n');
-            return new Blob([ics], { type: 'text/calendar' });
-        }
+<script>
+/* ----------------- Utilities ----------------- */
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function readableLocalDatetime(dtStr) {
+  try { return new Date(dtStr).toLocaleString(); } catch { return dtStr; }
+}
+function saveConfirmation(obj) {
+  const key = 'proposal_confirmations';
+  const arr = JSON.parse(localStorage.getItem(key) || '[]');
+  arr.push(obj);
+  localStorage.setItem(key, JSON.stringify(arr));
+  return arr;
+}
+function createICS({title='Date', startISO, durationMinutes=90, description=''}) {
+  const dtStart = startISO.replace(/[-:]/g, '').split('.')[0];
+  const start = new Date(startISO);
+  const end = new Date(start.getTime() + durationMinutes*60000);
+  const dtEnd = end.toISOString().replace(/[-:]/g,'').split('.')[0];
+  const uid = 'proposal-' + Math.random().toString(36).slice(2) + '@local';
+  const ics = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//ProposalApp//EN','BEGIN:VEVENT',
+    `UID:${uid}`,
+    `DTSTAMP:${new Date().toISOString().replace(/[-:]/g,'').split('.')[0]}`,
+    `DTSTART:${dtStart}`,
+    `DTEND:${dtEnd}`,
+    `SUMMARY:${title}`,
+    `DESCRIPTION:${description.replace(/\n/g,'\\n')}`,
+    'END:VEVENT','END:VCALENDAR'
+  ].join('\r\n');
+  return new Blob([ics], {type: 'text/calendar'});
+}
 
-        /* ----------------- Background uploader (local-only) ----------------- */
-        const bgUpload = document.getElementById('bgUpload');
-        bgUpload.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = ev => {
-                document.body.style.backgroundImage = `url(${ev.target.result})`;
-                try { localStorage.setItem('proposal_bg', ev.target.result); } catch (e) { }
-            };
-            reader.readAsDataURL(file);
-        });
-        if (localStorage.getItem('proposal_bg')) {
-            document.body.style.backgroundImage = `url(${localStorage.getItem('proposal_bg')})`;
-        } else {
-            document.body.style.backgroundImage = 'linear-gradient(120deg,#455a64,#1e88e5)';
-        }
+/* ----------------- Background uploader (local-only) ----------------- */
+const bgUpload = document.getElementById('bgUpload');
+bgUpload.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    document.body.style.backgroundImage = `url(${ev.target.result})`;
+    try { localStorage.setItem('proposal_bg', ev.target.result); } catch(e){}
+  };
+  reader.readAsDataURL(file);
+});
+if (localStorage.getItem('proposal_bg')) {
+  document.body.style.backgroundImage = `url(${localStorage.getItem('proposal_bg')})`;
+} else {
+  document.body.style.backgroundImage = 'linear-gradient(120deg,#455a64,#1e88e5)';
+}
 
-        /* ----------------- Yes popup flow (unchanged) ----------------- */
-        const yesBtn = document.getElementById('yesBtn');
-        const afterBox = document.getElementById('after');
+/* ----------------- Yes popup flow (unchanged) ----------------- */
+const yesBtn = document.getElementById('yesBtn');
+const afterBox = document.getElementById('after');
 
-        function makePopupHtml(appTitle = 'Confirm Date') {
-            return `
+function makePopupHtml(appTitle = 'Confirm Date') {
+  return `
   <!doctype html>
   <html>
   <head>
@@ -333,30 +181,30 @@
   </body>
   </html>
   `.trim();
-        }
+}
 
-        yesBtn.addEventListener('click', (ev) => {
-            const popup = window.open('', '_blank', 'width=420,height=520');
-            if (!popup) { alert('Popup blocked — please allow popups for this site or try opening in a new tab.'); return; }
-            const html = makePopupHtml('Pick a date & time');
-            popup.document.open(); popup.document.write(html); popup.document.close(); popup.focus();
-        });
+yesBtn.addEventListener('click', (ev) => {
+  const popup = window.open('', '_blank', 'width=420,height=520');
+  if (!popup) { alert('Popup blocked — please allow popups for this site or try opening in a new tab.'); return; }
+  const html = makePopupHtml('Pick a date & time');
+  popup.document.open(); popup.document.write(html); popup.document.close(); popup.focus();
+});
 
-        window.addEventListener('message', (ev) => {
-            try {
-                const msg = ev.data;
-                if (!msg || msg.type !== 'proposal-confirm') return;
-                const iso = msg.datetimeISO;
-                const note = String(msg.note || '').slice(0, 500);
-                const saved = saveConfirmation({
-                    datetimeISO: iso,
-                    datetimeLocal: msg.datetimeLocal,
-                    note,
-                    savedAt: msg.savedAt || new Date().toISOString()
-                });
+window.addEventListener('message', (ev) => {
+  try {
+    const msg = ev.data;
+    if (!msg || msg.type !== 'proposal-confirm') return;
+    const iso = msg.datetimeISO;
+    const note = String(msg.note || '').slice(0, 500);
+    const saved = saveConfirmation({
+      datetimeISO: iso,
+      datetimeLocal: msg.datetimeLocal,
+      note,
+      savedAt: msg.savedAt || new Date().toISOString()
+    });
 
-                afterBox.style.display = 'block';
-                afterBox.innerHTML = `
+    afterBox.style.display = 'block';
+    afterBox.innerHTML = `
       <strong>She said YES! 🎉</strong>
       <div style="margin-top:.5rem;">
         <div><strong>Date/time:</strong> ${readableLocalDatetime(iso)}</div>
@@ -374,185 +222,184 @@
       </div>
     `;
 
-                document.getElementById('downloadIcs').addEventListener('click', () => {
-                    const blob = createICS({
-                        title: 'Date with you 💖',
-                        startISO: iso,
-                        durationMinutes: 90,
-                        description: note || 'A lovely date'
-                    });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url; a.download = 'date.ics'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-                    document.getElementById('extraMsg').textContent = 'Downloaded — import into your calendar app.';
-                });
+    document.getElementById('downloadIcs').addEventListener('click', () => {
+      const blob = createICS({
+        title: 'Date with you 💖',
+        startISO: iso,
+        durationMinutes: 90,
+        description: note || 'A lovely date'
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'date.ics'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      document.getElementById('extraMsg').textContent = 'Downloaded — import into your calendar app.';
+    });
 
-                document.getElementById('copyBtn').addEventListener('click', async () => {
-                    const text = `She said YES!\nDate/time: ${readableLocalDatetime(iso)}\n${note ? 'Note: ' + note : ''}`;
-                    try { await navigator.clipboard.writeText(text); document.getElementById('extraMsg').textContent = 'Copied to clipboard.'; }
-                    catch (err) {
-                        document.getElementById('extraMsg').textContent = 'Unable to copy — select and copy manually:';
-                        const ta = document.createElement('textarea'); ta.value = text; ta.style.width = '100%'; ta.style.marginTop = '.5rem';
-                        document.getElementById('extraMsg').appendChild(ta);
-                    }
-                });
+    document.getElementById('copyBtn').addEventListener('click', async () => {
+      const text = `She said YES!\nDate/time: ${readableLocalDatetime(iso)}\n${note ? 'Note: '+note : ''}`;
+      try { await navigator.clipboard.writeText(text); document.getElementById('extraMsg').textContent = 'Copied to clipboard.'; }
+      catch (err) {
+        document.getElementById('extraMsg').textContent = 'Unable to copy — select and copy manually:';
+        const ta = document.createElement('textarea'); ta.value = text; ta.style.width='100%'; ta.style.marginTop='.5rem';
+        document.getElementById('extraMsg').appendChild(ta);
+      }
+    });
 
-                document.getElementById('clearBtn').addEventListener('click', () => {
-                    if (confirm('Clear all saved confirmations from this browser?')) {
-                        localStorage.removeItem('proposal_confirmations'); afterBox.style.display = 'none';
-                    }
-                });
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      if (confirm('Clear all saved confirmations from this browser?')) {
+        localStorage.removeItem('proposal_confirmations'); afterBox.style.display='none';
+      }
+    });
 
-                document.getElementById('savedList').textContent = JSON.stringify(saved.map(a => ({ when: a.savedAt, date: a.datetimeISO, note: a.note })), null, 2);
+    document.getElementById('savedList').textContent = JSON.stringify(saved.map(a => ({ when: a.savedAt, date: a.datetimeISO, note: a.note })), null, 2);
 
-            } catch (err) { console.error('message handler error', err); }
-        });
+  } catch (err) { console.error('message handler error', err); }
+});
 
-        /* ----------------- FOREVER-EVASIVE No button logic ----------------- */
-        const noBtn = document.getElementById('noBtn');
-        const buttonsWrap = document.getElementById('buttons');
-        let evadeCount = 0;
-        let lastMoveAt = 0;
+/* ----------------- FOREVER-EVASIVE No button logic ----------------- */
+const noBtn = document.getElementById('noBtn');
+const buttonsWrap = document.getElementById('buttons');
+let evadeCount = 0;
+let lastMoveAt = 0;
 
-        // Helper: compute random safe position within parent
-        function computeRandomPos(el) {
-            const parentRect = el.parentElement.getBoundingClientRect();
-            const btnRect = el.getBoundingClientRect();
-            const padding = 8;
-            const maxX = Math.max(0, parentRect.width - btnRect.width - padding);
-            const maxY = Math.max(0, parentRect.height - btnRect.height - padding);
-            // pick from larger range to allow jumps to edges occasionally (use some bias)
-            const x = Math.floor(Math.random() * (maxX + 1));
-            const y = Math.floor(Math.random() * (maxY + 1));
-            return { x, y };
-        }
+// Helper: compute random safe position within parent
+function computeRandomPos(el) {
+  const parentRect = el.parentElement.getBoundingClientRect();
+  const btnRect = el.getBoundingClientRect();
+  const padding = 8;
+  const maxX = Math.max(0, parentRect.width - btnRect.width - padding);
+  const maxY = Math.max(0, parentRect.height - btnRect.height - padding);
+  // pick from larger range to allow jumps to edges occasionally (use some bias)
+  const x = Math.floor(Math.random() * (maxX + 1));
+  const y = Math.floor(Math.random() * (maxY + 1));
+  return { x, y };
+}
 
-        // Move the No button quickly (with escalating speed & shrink)
-        function dodgeNoButton(el) {
-            evadeCount++;
-            lastMoveAt = Date.now();
+// Move the No button quickly (with escalating speed & shrink)
+function dodgeNoButton(el) {
+  evadeCount++;
+  lastMoveAt = Date.now();
 
-            // reduce size slowly but clamp
-            const minScale = 0.6;
-            const scale = Math.max(minScale, 1 - Math.min(evadeCount * 0.007, 0.35));
-            el.style.transformOrigin = 'center';
-            el.style.transition = `transform ${Math.max(0.05, 0.35 - Math.min(evadeCount * 0.006, 0.28))}s cubic-bezier(.2,.8,.2,1), width 0.12s ease, height 0.12s ease`;
-            el.style.width = Math.max(48, Math.round(el.offsetWidth * scale)) + 'px';
+  // reduce size slowly but clamp
+  const minScale = 0.6;
+  const scale = Math.max(minScale, 1 - Math.min(evadeCount * 0.007, 0.35));
+  el.style.transformOrigin = 'center';
+  el.style.transition = `transform ${Math.max(0.05, 0.35 - Math.min(evadeCount * 0.006, 0.28))}s cubic-bezier(.2,.8,.2,1), width 0.12s ease, height 0.12s ease`;
+  el.style.width = Math.max(48, Math.round(el.offsetWidth * scale)) + 'px';
 
-            // place at computed location
-            const pos = computeRandomPos(el);
-            el.style.transform = `translate(${pos.x}px, ${pos.y}px) scale(${scale})`;
+  // place at computed location
+  const pos = computeRandomPos(el);
+  el.style.transform = `translate(${pos.x}px, ${pos.y}px) scale(${scale})`;
 
-            // occasional flashy teleport (very rarely)
-            if (Math.random() < Math.min(0.08 + evadeCount * 0.0005, 0.25)) {
-                setTimeout(() => {
-                    const pos2 = computeRandomPos(el);
-                    el.style.transform = `translate(${pos2.x}px, ${pos2.y}px) scale(${scale})`;
-                }, 120 + Math.random() * 200);
-            }
+  // occasional flashy teleport (very rarely)
+  if (Math.random() < Math.min(0.08 + evadeCount * 0.0005, 0.25)) {
+    setTimeout(() => {
+      const pos2 = computeRandomPos(el);
+      el.style.transform = `translate(${pos2.x}px, ${pos2.y}px) scale(${scale})`;
+    }, 120 + Math.random()*200);
+  }
 
-            // occasionally create a decoy (small chance increases with evadeCount)
-            if (Math.random() < Math.min(0.06 + evadeCount * 0.0007, 0.25)) {
-                spawnDecoy(el);
-            }
-        }
+  // occasionally create a decoy (small chance increases with evadeCount)
+  if (Math.random() < Math.min(0.06 + evadeCount * 0.0007, 0.25)) {
+    spawnDecoy(el);
+  }
+}
 
-        // Spawn a decoy button near the No location that distracts clicks
-        function spawnDecoy(originalEl) {
-            try {
-                const decoy = document.createElement('button');
-                decoy.className = 'decoy';
-                decoy.textContent = 'No 😅';
-                // find a random spot near original
-                const parentRect = originalEl.parentElement.getBoundingClientRect();
-                const origRect = originalEl.getBoundingClientRect();
-                // compute near coordinates
-                const offsetX = (Math.random() * 300 - 150);
-                const offsetY = (Math.random() * 200 - 100);
-                const left = Math.min(Math.max(10, origRect.left - parentRect.left + offsetX), parentRect.width - 10);
-                const top = Math.min(Math.max(10, origRect.top - parentRect.top + offsetY), parentRect.height - 10);
+// Spawn a decoy button near the No location that distracts clicks
+function spawnDecoy(originalEl) {
+  try {
+    const decoy = document.createElement('button');
+    decoy.className = 'decoy';
+    decoy.textContent = 'No 😅';
+    // find a random spot near original
+    const parentRect = originalEl.parentElement.getBoundingClientRect();
+    const origRect = originalEl.getBoundingClientRect();
+    // compute near coordinates
+    const offsetX = (Math.random() * 300 - 150);
+    const offsetY = (Math.random() * 200 - 100);
+    const left = Math.min(Math.max(10, origRect.left - parentRect.left + offsetX), parentRect.width - 10);
+    const top = Math.min(Math.max(10, origRect.top - parentRect.top + offsetY), parentRect.height - 10);
 
-                decoy.style.left = left + 'px';
-                decoy.style.top = top + 'px';
-                decoy.style.zIndex = 999;
-                decoy.style.opacity = '0.98';
-                decoy.style.transform = 'scale(0.9)';
-                buttonsWrap.appendChild(decoy);
+    decoy.style.left = left + 'px';
+    decoy.style.top = top + 'px';
+    decoy.style.zIndex = 999;
+    decoy.style.opacity = '0.98';
+    decoy.style.transform = 'scale(0.9)';
+    buttonsWrap.appendChild(decoy);
 
-                // animate a brief wobble then disappear on click or after timeout
-                decoy.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    // a fake click — show a little message then remove
-                    decoy.textContent = 'Oops!';
-                    decoy.style.transition = 'transform 0.18s ease, opacity 0.2s ease';
-                    decoy.style.transform = 'scale(0.6)';
-                    setTimeout(() => decoy.remove(), 400);
-                });
+    // animate a brief wobble then disappear on click or after timeout
+    decoy.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // a fake click — show a little message then remove
+      decoy.textContent = 'Oops!';
+      decoy.style.transition = 'transform 0.18s ease, opacity 0.2s ease';
+      decoy.style.transform = 'scale(0.6)';
+      setTimeout(()=>decoy.remove(), 400);
+    });
 
-                setTimeout(() => {
-                    decoy.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-                    decoy.style.opacity = '0';
-                    decoy.style.transform = 'scale(0.4)';
-                    setTimeout(() => decoy.remove(), 400);
-                }, 900 + Math.random() * 1100);
-            } catch (e) { /* ignore */ }
-        }
+    setTimeout(() => {
+      decoy.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+      decoy.style.opacity = '0';
+      decoy.style.transform = 'scale(0.4)';
+      setTimeout(()=>decoy.remove(), 400);
+    }, 900 + Math.random()*1100);
+  } catch (e) { /* ignore */ }
+}
 
-        // Always dodge on mouseenter, touchstart, focus and click; never stop
-        noBtn.addEventListener('mouseenter', () => dodgeNoButton(noBtn));
-        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dodgeNoButton(noBtn); }, { passive: false });
-        noBtn.addEventListener('focus', () => dodgeNoButton(noBtn));
+// Always dodge on mouseenter, touchstart, focus and click; never stop
+noBtn.addEventListener('mouseenter', () => dodgeNoButton(noBtn));
+noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dodgeNoButton(noBtn); }, {passive:false});
+noBtn.addEventListener('focus', () => dodgeNoButton(noBtn));
 
-        // If user manages to click, prevent default and dodge again
-        noBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            dodgeNoButton(noBtn);
-        });
+// If user manages to click, prevent default and dodge again
+noBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+  dodgeNoButton(noBtn);
+});
 
-        // Also react when the mouse moves near the button (proximity trigger)
-        document.addEventListener('mousemove', (ev) => {
-            try {
-                const r = noBtn.getBoundingClientRect();
-                const dx = ev.clientX - (r.left + r.width / 2);
-                const dy = ev.clientY - (r.top + r.height / 2);
-                const dist = Math.hypot(dx, dy);
-                // if mouse gets within certain pixels, dodge
-                if (dist < Math.max(120, r.width * 1.8)) {
-                    // throttle so it doesn't spam moves too quickly
-                    if (Date.now() - lastMoveAt > 80) dodgeNoButton(noBtn);
-                }
-            } catch (e) { }
-        });
+// Also react when the mouse moves near the button (proximity trigger)
+document.addEventListener('mousemove', (ev) => {
+  try {
+    const r = noBtn.getBoundingClientRect();
+    const dx = ev.clientX - (r.left + r.width/2);
+    const dy = ev.clientY - (r.top + r.height/2);
+    const dist = Math.hypot(dx, dy);
+    // if mouse gets within certain pixels, dodge
+    if (dist < Math.max(120, r.width * 1.8)) {
+      // throttle so it doesn't spam moves too quickly
+      if (Date.now() - lastMoveAt > 80) dodgeNoButton(noBtn);
+    }
+  } catch (e){}
+});
 
-        // Accessibility: keyboard users can still choose an accessible alternative
-        // Provide a hidden keyboard-friendly 'I prefer not to answer' link that opens a confirm modal
-        // (keeps keyboard users from being trapped)
-        function injectKeyboardAlternative() {
-            const alt = document.createElement('div');
-            alt.style.marginTop = '8px';
-            alt.innerHTML = `<button id="kbdNo" class="linkish" style="background:none;border:none;color:var(--muted);">Prefer not to answer</button>`;
-            document.querySelector('.wrap').appendChild(alt);
-            document.getElementById('kbdNo').addEventListener('click', () => {
-                // quick confirm dialog for keyboard users
-                if (confirm("Are you sure you want to say 'No'?")) {
-                    alert("Understood. Thank you for your honesty. 😊");
-                }
-            });
-        }
-        injectKeyboardAlternative();
+// Accessibility: keyboard users can still choose an accessible alternative
+// Provide a hidden keyboard-friendly 'I prefer not to answer' link that opens a confirm modal
+// (keeps keyboard users from being trapped)
+function injectKeyboardAlternative() {
+  const alt = document.createElement('div');
+  alt.style.marginTop = '8px';
+  alt.innerHTML = `<button id="kbdNo" class="linkish" style="background:none;border:none;color:var(--muted);">Prefer not to answer</button>`;
+  document.querySelector('.wrap').appendChild(alt);
+  document.getElementById('kbdNo').addEventListener('click', () => {
+    // quick confirm dialog for keyboard users
+    if (confirm("Are you sure you want to say 'No'?")) {
+      alert("Understood. Thank you for your honesty. 😊");
+    }
+  });
+}
+injectKeyboardAlternative();
 
-        /* ----------------- Fallback: check temp storage if popup wrote to localStorage ----------------- */
-        window.addEventListener('focus', () => {
-            try {
-                const tmp = localStorage.getItem('proposal_confirm_temp');
-                if (tmp) {
-                    const msg = JSON.parse(tmp);
-                    window.dispatchEvent(new MessageEvent('message', { data: msg }));
-                    localStorage.removeItem('proposal_confirm_temp');
-                }
-            } catch (e) { }
-        });
-    </script>
+/* ----------------- Fallback: check temp storage if popup wrote to localStorage ----------------- */
+window.addEventListener('focus', () => {
+  try {
+    const tmp = localStorage.getItem('proposal_confirm_temp');
+    if (tmp) {
+      const msg = JSON.parse(tmp);
+      window.dispatchEvent(new MessageEvent('message', { data: msg }));
+      localStorage.removeItem('proposal_confirm_temp');
+    }
+  } catch(e){}
+});
+</script>
 </body>
-
 </html>
